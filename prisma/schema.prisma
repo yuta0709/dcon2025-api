@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  uuid        String   @id @default(uuid())
+  name        String
+  mealDetails Meal[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CareReceiver {
+  uuid       String      @id @default(uuid())
+  name       String
+  dailyMeals DailyMeal[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model DailyMeal {
+  uuid             String       @id @default(uuid())
+  careReceiver     CareReceiver @relation(fields: [careReceiverUuid], references: [uuid])
+  careReceiverUuid String
+  meals            Meal[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model Meal {
+  uuid           String          @id @default(uuid())
+  user           User            @relation(fields: [userUuid], references: [uuid])
+  userUuid       String
+  dailyMeal      DailyMeal       @relation(fields: [dailyMealUuid], references: [uuid])
+  dailyMealUuid  String
+  mealType       MealType
+  mainDish       Int?
+  sideDish       Int?
+  soup           Int?
+  note           String?
+  transcriptions Transcript[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@unique([dailyMealUuid, mealType])
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+}
+
+model Transcript {
+  uuid      String   @id @default(uuid())
+  meal      Meal     @relation(fields: [mealUuid], references: [uuid])
+  mealUuid  String
+  transcript      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
