@@ -2,11 +2,13 @@ import { Expose } from 'class-transformer';
 
 export class MealResponseDto {
   @Expose()
-  mainDish: number;
+  uuid: string;
   @Expose()
-  sideDish: number;
+  mainDish: number | null;
   @Expose()
-  soup: number;
+  sideDish: number | null;
   @Expose()
-  note: string;
+  soup: number | null;
+  @Expose()
+  note: string | null;
 }

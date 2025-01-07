@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { MealsService } from './meals.service';
-import { CreateMealDto, CreateMealResponseDto } from './dto/create-meal.dto';
+import { CreateMealDto } from './dto/create-meal.dto';
 import { plainToInstance } from 'class-transformer';
 import { ExtractorService } from 'src/extractor/extractor.service';
 import { MealResponseDto } from './dto/meal-response.dto';
@@ -18,7 +18,7 @@ export class MealsController {
   @Post()
   async create(@Body() createMealDto: CreateMealDto) {
     const meal = await this.mealsService.createOrFindMeal(createMealDto);
-    return plainToInstance(CreateMealResponseDto, meal, {
+    return plainToInstance(MealResponseDto, meal, {
       excludeExtraneousValues: true,
     });
   }
