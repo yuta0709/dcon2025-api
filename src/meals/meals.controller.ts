@@ -28,18 +28,17 @@ export class MealsController {
     @Param('uuid') uuid: string,
     @Body() createTranscriptDto: CreateTranscriptDto,
   ) {
-    await this.transcriptsService.createTranscript(uuid, createTranscriptDto);
+    const currentMeal = await this.mealsService.findOne(uuid);
+    const response = await this.extractorService.extractData(
+      createTranscriptDto.transcript,
+      currentMeal,
+    );
 
-    const transcripts = await this.transcriptsService.findAllByMealUuid(uuid);
-    const transcript = transcripts.map((t) => t.transcript).join(' ');
-    console.log(transcript);
-    const response = await this.extractorService.extractData(transcript);
     const meal = await this.mealsService.update(uuid, response);
     return plainToInstance(MealResponseDto, meal, {
       excludeExtraneousValues: true,
     });
   }
-
   @Get(':uuid')
   findOne(@Param('uuid') uuid: string) {
     return this.mealsService.findOne(uuid);
