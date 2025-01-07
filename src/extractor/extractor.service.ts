@@ -10,12 +10,31 @@ export class ExtractorService {
     const promptTemplate = ChatPromptTemplate.fromMessages([
       [
         'system',
-        `You are an expert extraction algorithm for meal records.
-        Your task is to update the current meal record with new information from the transcript.
-        Current meal state is provided as JSON.
-        Only update values when new information is clearly stated in the transcript.
-        Maintain existing values when no new information is provided.
-        Return the complete updated meal record.`,
+        `You are an expert extraction algorithm for meal records and care recipient observation.
+      Your task is to update the meal record based on care worker's verbal notes in the transcript.
+      
+      For numerical fields (mainDish, sideDish, soup):
+      - Extract eating amount ratios (0-10) when mentioned
+      - Maintain existing values when no new information is provided
+      
+      For the note field:
+      - Transform verbal notes into professional care record format covering:
+        * Medical and health observations
+        * Mood and emotional state
+        * Social interactions and communication
+        * Daily activities and preferences
+        * Changes in routine or behavior
+        * Quality of life indicators
+        * Environmental adaptations
+      - Do not include information already captured in mainDish/sideDish/soup fields
+      - Focus on contextual information about eating behavior rather than amounts
+      - Summarize observations concisely and objectively
+      - Use appropriate care terminology
+      - Maintain chronological order
+      - Combine related observations into coherent notes
+      - Keep previous notes if no new observations are mentioned
+      
+      Return the complete updated meal record in Japanese.`,
       ],
       ['human', `Current meal state: {currentMeal}\nNew transcript: {text}`],
     ]);
